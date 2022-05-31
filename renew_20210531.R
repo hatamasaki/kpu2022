@@ -113,6 +113,13 @@ data %>%
 data <- data %>% 
   mutate(abe = q4_2_1)
 
+#"gender"変数を作成してみよう（sexを使う）
+
+
+#性別の度数分布
+data %>% 
+  with(round(prop.table(table(gender))*100,2))
+
 #2値で平均値比較
 data %>% 
   group_by(gender) %>% # genderの値ごとに分けると宣言
@@ -156,7 +163,7 @@ data %>%
         axis.text.y = element_text(size = 12),
         axis.title.x = element_text(size = 15),
         axis.title.y = element_text(size = 15)
-  ) 
+  )
 
 ########################################################
 #宿題
@@ -180,17 +187,6 @@ data %>%
               国民 = mean(国民, na.rm = TRUE))
 
 
-#性別の変数を作成
-data <- data %>% 
-  mutate(gender = 
-           case_when(sex==1 ~ "男性",
-                     sex==0 ~ "女性") ) %>% 
-  mutate(gender=factor(gender,levels=c("男性","女性")))
-#summarise(Mean = mean(sex, na.rm = TRUE))
-
-#性別の度数分布
-data %>% 
-  with(round(prop.table(table(gender))*100,2))
 
 #男女で最も好感度に差がある政党
 #これもっと効率的にできる方法があれば…
@@ -269,7 +265,7 @@ prop.test(c(***, 866), c(***, 1547))
 #韓国 (q4_3_4)  日本 (q4_3_6)*18-39歳（若年層）と40歳−59歳（中年世代）と60歳以上（高齢世代）で
 #日本と韓国の世代別好感度に差はあるかTurkeyの方法で検定してみましょう
 
-#世代
+#世代（gen3)を作成
 data <- data %>% 
   mutate(gen3 =
            case_when(age>=18 & age<40 ~ "若年層",
@@ -278,15 +274,7 @@ data <- data %>%
   mutate(gen3 = factor(gen3,level=c("若年層","ミドル層","高齢層")))
 
 
-#海外好感度
-data <- data %>% 
-  mutate(US = q4_3_1,
-         韓国 = q4_3_4,
-         日本 = q4_3_6)
-
-TukeyHSD(aov(data$US~data$gen3)) 
-TukeyHSD(aov(data$韓国~data$gen3)) 
-TukeyHSD(aov(data$日本~data$gen3))
+#海外好感度（変数名 = US,韓国,日本）を作成
 
 #平均値自体も調べてみよう（いろんな方法があるので書きやすいのでどうぞ）
 data %>% 
@@ -447,7 +435,8 @@ reg2 <- coefplot(result2, intercept = FALSE, lwdOuter = 1,
                               edu = "教育程度",
                               income = "世帯収入",
                               citysize_n = "都市規模",
-                              ideology = "イデオロギー"))
+                              ideology = "イデオロギー"),
+                 )
 
 print(reg2)
 #ggsave("reg2.png")
@@ -464,7 +453,7 @@ library(ggeffects)
 ##年齢の予測値をプロット
 
 #marginaleffects
-result3 <- lm(自民 ~ age + gender + edu + income + citysize_n + ideology + pid, data = data)                   
+result3 <- lm(自民 ~ age + gender + edu + income + citysize_n + ideology + pid, data = data)                
 
 pred <- predictions(result3,
                     newdata = datagrid(
