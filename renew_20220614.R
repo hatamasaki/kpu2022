@@ -342,6 +342,19 @@ coefplot(result1, intercept = FALSE)
 #ggplotだと簡単に保存できる！
 ggsave("回帰分析.png",dpi = 100, width = 10, height = 5)
 
+
+#ggplotでもかける
+#データを変換→フィルター→ggplot
+tidy(result1, conf.int = TRUE) %>%
+  filter(term == "age") %>% 
+  ggplot() +
+  geom_vline(xintercept = 0, color = "red") +
+  geom_pointrange(aes(x = estimate, xmin = conf.low, xmax = conf.high,
+                      y = term)) +
+  theme_gray(base_size = 12) +
+  theme(axis.title.x = element_blank(),
+        axis.title.y = element_blank())
+
 #立憲民主党の感情温度に与える政党支持の効果を分析→プロットしてみよう！
 
 
@@ -460,17 +473,6 @@ print(reg2)
 ggsave("coef.png",reg2,dpi = 300, width = 8, height = 5)
 
 
-#ggplotでもかける
-#データを変換→フィルター→ggplot
-tidy(result2, conf.int = TRUE) %>%
-  filter(term == "age") %>% 
-  ggplot() +
-  geom_vline(xintercept = 0, color = "red") +
-  geom_pointrange(aes(x = estimate, xmin = conf.low, xmax = conf.high,
-                      y = term)) +
-  theme_gray(base_size = 12) +
-  theme(axis.title.x = element_blank(),
-        axis.title.y = element_blank())
 
 #############################################################
 #予測値の計算
